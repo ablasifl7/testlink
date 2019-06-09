@@ -412,6 +412,23 @@ public class Excel {
 		}
 	    cell.setCellStyle(style);
 	}
+	
+	public java.util.List<String> sheetNames(){
+		java.util.List<String> list = new java.util.ArrayList<String>();
+		if(extension){
+			for(int i=0;i<workbookExt.getNumberOfSheets();i++){
+				list.add(workbookExt.getSheetName(i));
+			}
+		}else{
+			for(int i=0;i<workbookOld.getNumberOfSheets();i++){
+				list.add(workbookOld.getSheetName(i));
+			}
+		}
+		return list;
+	}
+	
+	
+	
 	public final short BLACK1 = IndexedColors.BLACK1.getIndex();
 	public final short WHITE1 = IndexedColors.WHITE1.getIndex();
 	public final short RED1 = IndexedColors.RED1.getIndex();

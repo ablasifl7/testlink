@@ -33,10 +33,21 @@ public class App
     	//Test4.test7();
     	//test2();
     	//TestExcel.test1();
-    	
+    	testExcel();
        System.out.println("END");
       
     }
+    
+    private static void testExcel(){
+    	String path = "C:\\Users\\Agustí\\Desktop\\Ma_documents\\CVs\\RICOH\\HC3\\HC3_ETC_Retornar_ClinicalDocument\\PKK - Prova KKX - PP relacionats.xls";
+    	ricoh.es.methods.Excel excel = new ricoh.es.methods.Excel(path, null);
+    	
+    	java.util.List<String> list = excel.sheetNames();
+    	for(int i=0;i<list.size();i++){
+    		System.out.println(list.get(i));
+    	}
+    }
+    
     private static void test2(){
     	TestLink tl = new TestLink(testLinkURL, devKey);
     	

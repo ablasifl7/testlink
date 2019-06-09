@@ -45,4 +45,7 @@ public class Buttons {
      protected static void uploadExcel(){
     	 Execute.uploadExcel();
      }
+     protected static void checkExcel(){
+    	 Execute.checkExcel();
+     }
 }

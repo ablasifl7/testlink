@@ -56,6 +56,7 @@ public class Panel extends javax.swing.JFrame {
         jLabelLogs = new javax.swing.JLabel();
         jButtonUploadExel = new javax.swing.JButton();
         jComboBoxLastExecution = new javax.swing.JComboBox();
+        jButtonCheckExcel = new javax.swing.JButton();
         jScrollPane5 = new javax.swing.JScrollPane();
         jTableToExecute = new javax.swing.JTable();
 
@@ -259,7 +260,14 @@ public class Panel extends javax.swing.JFrame {
             }
         });
 
-        jComboBoxLastExecution.setModel(new javax.swing.DefaultComboBoxModel(new String[] {"EXECUTE AND REMOVE LAST EXECUTION", "ONLY EXECUTE", "REMOVE LAST EXECUTION AND EXECUTE", "REMOVE LAST EXECUTION" }));
+        jComboBoxLastExecution.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "EXECUTE AND REMOVE LAST EXECUTION", "ONLY EXECUTE", "REMOVE LAST EXECUTION AND EXECUTE", "REMOVE LAST EXECUTION" }));
+
+        jButtonCheckExcel.setText("CHECK EXCEL");
+        jButtonCheckExcel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCheckExcelActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -285,7 +293,10 @@ public class Panel extends javax.swing.JFrame {
                                         .addComponent(jLabelLogs, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)))
                                 .addGap(145, 145, 145)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jButtonFilter)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jButtonCheckExcel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jButtonFilter))
                                     .addComponent(jComboBoxLastExecution, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(jProgressBarExelToTestLink, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
@@ -304,7 +315,8 @@ public class Panel extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButtonFilter)
-                            .addComponent(jButtonUploadExel))
+                            .addComponent(jButtonUploadExel)
+                            .addComponent(jButtonCheckExcel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButtonExecuteExcelTotestLink)
@@ -417,6 +429,11 @@ public class Panel extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jTextFieldExcelToTestlinkActionPerformed
 
+    private void jButtonCheckExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCheckExcelActionPerformed
+        // TODO add your handling code here:
+        Buttons.checkExcel();
+    }//GEN-LAST:event_jButtonCheckExcelActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -463,6 +480,7 @@ public class Panel extends javax.swing.JFrame {
     
     */
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonCheckExcel;
     protected javax.swing.JButton jButtonExecuteExcelTotestLink;
     protected javax.swing.JButton jButtonFilter;
     protected javax.swing.JButton jButtonUploadExcelToTestLink;

@@ -1,7 +1,9 @@
 package ricoh.es;
 
-public class ExecuteExcel {
+import javax.swing.JOptionPane;
 
+public class ExecuteExcel {
+/*
 	private static String path;
 	private static String customField;
 	private static String[] customFieldHeders;
@@ -18,7 +20,7 @@ public class ExecuteExcel {
 	private static String codeHeader;
 	private static String testHeader;
 	private static String commentHeader;
-
+*/
 	protected static java.util.HashMap<String,String> hmResults;
 	private static java.util.HashMap<String,String> hmCustomFields;
 	
@@ -43,6 +45,7 @@ public class ExecuteExcel {
 			int mainHeaderRow,int environmentHeaderRow,
 			String[] resultValues,String[] resultRelations,String codeHeader,
 			String testHeader,String commentHeader){
+	/*
 		ExecuteExcel.path = path;
 		ExecuteExcel.customField = customField;
 		ExecuteExcel.customFieldHeders = customFieldHeders;
@@ -59,8 +62,9 @@ public class ExecuteExcel {
 		ExecuteExcel.codeHeader = codeHeader;
 		ExecuteExcel.testHeader = testHeader;
 		ExecuteExcel.commentHeader = commentHeader;
-		
+	*/
 		ricoh.es.methods.Excel excel = new ricoh.es.methods.Excel(path, null);
+		
 
 		int idCode = -1;
 		java.util.HashMap<String,Integer> idExecution = new java.util.HashMap<String,Integer>();
@@ -77,8 +81,16 @@ public class ExecuteExcel {
 		hmResults = putToHashMap(resultValues,resultRelations);
 		hmCustomFields = putToHashMap(customFieldHeders,customFieldValues);
 		
+		String environmentSheetRef = null;
+		java.util.List<String> sheetList = excel.sheetNames();
+		for(int i=0;i<environmentSheet.length && environmentSheetRef == null;i++){
+			if(sheetList.contains(environmentSheet[i])){
+				environmentSheetRef = environmentSheet[i];
+			}
+		}
+		
 		int n = 0;
-		String text = excel.readCell(environmentSheet[0], environmentHeaderRow, n++);
+		String text = excel.readCell(environmentSheetRef, environmentHeaderRow, n++);
 		do{
 
 			if (ricoh.es.methods.Utils.equals(text, codeHeader)){
@@ -104,10 +116,10 @@ public class ExecuteExcel {
 			if (ricoh.es.methods.Utils.equals(text, buildHeader)){
 				idBuild  = n-1;
 			}
-			text = excel.readCell(environmentSheet[0], environmentHeaderRow, n++);
+			text = excel.readCell(environmentSheetRef, environmentHeaderRow, n++);
 		}while (text != null);
 	
-		int lastRow = excel.getLastRow(environmentSheet[0]);
+		int lastRow = excel.getLastRow(environmentSheetRef);
 
 		al = new java.util.ArrayList<Object[]>();
 		Object[][] ob = null;
@@ -137,38 +149,40 @@ public class ExecuteExcel {
 		
 
 		for(int i=0;i<environmentSheet.length;i++){
-			for(int j=environmentHeaderRow+1;j<lastRow;j++){
-				for(int k=0;k<customFieldValues.length;k++){
-					String environment = excel.readCell(environmentSheet[i],j,idEnvironment);
-					String testPlan    = excel.readCell(environmentSheet[i],j,idTestPlan);
-					String build       = excel.readCell(environmentSheet[i],j,idBuild);			
-					
-					if(alEnvironment.contains(environment)){
-						obAux = new Object[Execute.cap.length];
-						obAux[Col_SELECT] = true;
-						obAux[Col_CODE] = excel.readCell(environmentSheet[i],j,idCode);
-						obAux[Col_ENVIRONMENT] = environment;
-						obAux[Col_TESTPLAN] = testPlan;
-						obAux[Col_BUILD] = build;
-						if (ricoh.es.methods.Utils.equals(WS, customFieldValues[k])){
-							obAux[Col_BROWSER] = WS;
-							obAux[Col_RESULT] = excel.readCell(environmentSheet[i],j,idExecution.get(WS));
-						}else if (ricoh.es.methods.Utils.equals(IE, customFieldValues[k])){
-							obAux[Col_BROWSER] = IE;
-							obAux[Col_RESULT] = excel.readCell(environmentSheet[i],j,idExecution.get(IE));
-						}else if (ricoh.es.methods.Utils.equals(Chrome, customFieldValues[k])){
-							obAux[Col_BROWSER] = Chrome;
-							obAux[Col_RESULT] = excel.readCell(environmentSheet[i],j,idExecution.get(Chrome));
-						}else{
-							obAux[Col_BROWSER] = "?";
-							obAux[Col_RESULT] = "?";
-						}
-						obAux[Col_EXECUTE_RESULTS] = null;
-						obAux[Col_TESTNAME] = excel.readCell(environmentSheet[i],j,idTestName);
-						obAux[Col_NOTES] = excel.readCell(environmentSheet[i],j,idComment);			
-						if(obAux[Col_RESULT] != null) {
-							if (!ricoh.es.methods.Utils.equals("NA",hmResults.get(obAux[Col_RESULT].toString()))){
-								al.add(obAux);
+			if(sheetList.contains(environmentSheet[i])){
+				for(int j=environmentHeaderRow+1;j<lastRow;j++){
+					for(int k=0;k<customFieldValues.length;k++){
+						String environment = excel.readCell(environmentSheet[i],j,idEnvironment);
+						String testPlan    = excel.readCell(environmentSheet[i],j,idTestPlan);
+						String build       = excel.readCell(environmentSheet[i],j,idBuild);			
+						
+						if(alEnvironment.contains(environment)){
+							obAux = new Object[Execute.cap.length];
+							obAux[Col_SELECT] = true;
+							obAux[Col_CODE] = excel.readCell(environmentSheet[i],j,idCode);
+							obAux[Col_ENVIRONMENT] = environment;
+							obAux[Col_TESTPLAN] = testPlan;
+							obAux[Col_BUILD] = build;
+							if (ricoh.es.methods.Utils.equals(WS, customFieldValues[k])){
+								obAux[Col_BROWSER] = WS;
+								obAux[Col_RESULT] = excel.readCell(environmentSheet[i],j,idExecution.get(WS));
+							}else if (ricoh.es.methods.Utils.equals(IE, customFieldValues[k])){
+								obAux[Col_BROWSER] = IE;
+								obAux[Col_RESULT] = excel.readCell(environmentSheet[i],j,idExecution.get(IE));
+							}else if (ricoh.es.methods.Utils.equals(Chrome, customFieldValues[k])){
+								obAux[Col_BROWSER] = Chrome;
+								obAux[Col_RESULT] = excel.readCell(environmentSheet[i],j,idExecution.get(Chrome));
+							}else{
+								obAux[Col_BROWSER] = "?";
+								obAux[Col_RESULT] = "?";
+							}
+							obAux[Col_EXECUTE_RESULTS] = null;
+							obAux[Col_TESTNAME] = excel.readCell(environmentSheet[i],j,idTestName);
+							obAux[Col_NOTES] = excel.readCell(environmentSheet[i],j,idComment);			
+							if(obAux[Col_RESULT] != null) {
+								if (!ricoh.es.methods.Utils.equals("NA",hmResults.get(obAux[Col_RESULT].toString()))){
+									al.add(obAux);
+								}
 							}
 						}
 					}
@@ -267,6 +281,72 @@ final static int Col_NOTES = 9;
 				, Execute.cap, ob, Execute.sizeCol, Execute.typeCol, Execute.edit, null);
 	}
 	
+
+	final static String CAPSALERA = "WARNING";
+	final static String[] BOTONS = {"ACCEPT","OPEN EXCEL"};
+	final static String ACCEPT = BOTONS[0];
+	protected static void checkExcel(String path,String[] customFieldHeders,
+			String[] environmentSheet,String environmentHeader,
+			String testPlanHeader,String buildHeader,int environmentHeaderRow,
+			String codeHeader,String testHeader,String commentHeader){
+		String message = "";
+		ricoh.es.methods.Excel excel = new ricoh.es.methods.Excel(path, null);
+		java.util.List<String> sheets = new java.util.ArrayList<String>();
+		java.util.List<String> sheetList = excel.sheetNames();
+		for(int i=0;i<environmentSheet.length;i++){
+			if(sheetList.contains(environmentSheet[i])){
+				sheets.add(environmentSheet[i]);
+			}else{
+				message += "Sheet '"+environmentSheet[i]+"' doesn't exist\n";
+			}
+		}
+		
+
+		
+		java.util.List<String> headers = new java.util.ArrayList<String>(); 
+		headers.add(codeHeader);
+		for(int i=0;i<customFieldHeders.length;i++){
+			headers.add(customFieldHeders[i]);
+		}
+		headers.add(testHeader);
+		headers.add(commentHeader);
+		headers.add(environmentHeader);
+		headers.add(testPlanHeader);
+		headers.add(buildHeader);
+
+		java.util.List<String> sheetHeaders = null;
+		
+		for(String sheet:sheets){
+			int n = -1;
+			sheetHeaders = new java.util.ArrayList<String>(); 
+			String text = excel.readCell(sheet, environmentHeaderRow, ++n);
+			do{
+				sheetHeaders.add(text);
+				text = excel.readCell(sheet, environmentHeaderRow, ++n);
+			}while (text != null);
+			for(String header:headers){
+				if(!sheetHeaders.contains(header)){
+					message += "In sheet '"+sheet+"', header '" +header+"' isn't displayed\n";
+				}
+			}
+		}	
+		int op = -2;
+		if(message.length() == 0){
+			message = "All fields OK";
+			op = JOptionPane.showOptionDialog(null,message, CAPSALERA,
+	                JOptionPane.CANCEL_OPTION, JOptionPane.DEFAULT_OPTION, null, BOTONS,
+	                ACCEPT);
+		}else{
+			op = JOptionPane.showOptionDialog(null,message, CAPSALERA,
+	                JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, BOTONS,
+	                ACCEPT);
+		}
+		if(op == 1){
+			ricoh.es.methods.Utils.openFile(path);
+		}
+	
+		
+	}
 	
 	private String[] getSelectetValues(javax.swing.JList list,String[] s){
 		java.util.List<Object> l = list.getSelectedValuesList();
@@ -278,5 +358,6 @@ final static int Col_NOTES = 9;
 		}
 		return s;
 	}
+	
 
 }

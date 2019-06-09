@@ -139,10 +139,35 @@ public class Execute {
 		
 		
 	}
+	
+	
+	
 	protected static void executeExcelToTestLink(){
 		et = new ExecuteThread();
 		et.start();
 	}
+	protected static void checkExcel(){
+		
+		
+		java.io.File fExel = new java.io.File(PanelClass.get().jTextFieldExcelToTestlink.getText());
+		String fileName = fExel.getName().toLowerCase();
+		if(!fExel.exists()){
+			JOptionPane.showOptionDialog(null, "FILE '"
+					+ ""+PanelClass.get().jTextFieldExcelToTestlink.getText()+"' DON'T EXIST", CAPSALERA,
+	                JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, BOTONS,
+	                ACCEPT);
+		}else if( fileName.endsWith(".xls") || fileName.endsWith(".xlsx")){
+			ExecuteExcel.checkExcel(PanelClass.get().jTextFieldExcelToTestlink.getText(),
+					customFieldHeders, environmentSheet, environmentHeader, testPlanHeader, buildHeader, environmentHeaderRow, codeHeader, testHeader, commentHeader);
 
+
+		}else{
+			JOptionPane.showOptionDialog(null, "FILE '"
+					+ ""+PanelClass.get().jTextFieldExcelToTestlink.getText()+"' ISN'T AN EXCEL FILE", CAPSALERA,
+	                JOptionPane.CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, BOTONS,
+	                ACCEPT);
+		}
+		
+	}
 
 }
