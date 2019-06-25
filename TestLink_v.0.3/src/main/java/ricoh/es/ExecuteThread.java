@@ -7,6 +7,11 @@ import br.eti.kinoshita.testlinkjavaapi.constants.ExecutionStatus;
 
 
 public class ExecuteThread extends Thread{
+	final private int EXECUTE_AND_REMOVE_LAST_EXECUTION = 0;
+	final private int ONLY_EXECUTE = 1;
+	final private int REMOVE_LAST_EXECUTION_AND_EXECUTE = 2;
+	final private int REMOVE_LAST_EXECUTION = 3;
+	final private int CHECK_EXECUTION = 4;
 	
 	public void run(){
 		//TestLinkClass.getTestLink().
@@ -26,9 +31,26 @@ public class ExecuteThread extends Thread{
 		
 		Integer testPlanId = -1;
 		String planName = null;
+		
+		DataBase db = null;
+		
+		
+		PanelClass.get().jComboBoxLastExecution.setEnabled(false);
+		java.util.Map<String,String> map = null;
+		if( CHECK_EXECUTION == PanelClass.get().jComboBoxLastExecution.getSelectedIndex()){
+			PanelClass.get().jProgressBarExelToTestLink.setIndeterminate(true);
+			String url = "jdbc:mysql://192.168.200.49:3306";
+			String user = "rsa_ro";
+			String password = "sogtulapdt";
+			db = new DataBase(url, user, password);
+			
+		}
+
 
 		String prefix = TestLinkClass.hmProjectPrefix.get(PanelClass.get()
+				
 				.jComboBoxTestProjects.getSelectedItem().toString());
+		Integer testProjectId = TestLinkClass.getTestLink().getTestProjectId(prefix);
 		String projectName = TestLinkClass.hmPrefixProjName.get(prefix);
 		TestLinkClass tlc = TestLinkClass.getTestLink().getProjectClass(projectName);
 		
@@ -39,6 +61,10 @@ public class ExecuteThread extends Thread{
 				testPlanId = tlcList[i].getTestPlanId();
 				planName = tlcList[i].getTestPlanName();
 			}
+		}
+		if(CHECK_EXECUTION == PanelClass.get().jComboBoxLastExecution.getSelectedIndex()){
+			db.executedResultCustomFields(testPlanId);
+			PanelClass.get().jProgressBarExelToTestLink.setIndeterminate(false);
 		}
 		
 		String[] executeResults = new String[nRows];
@@ -95,28 +121,31 @@ public class ExecuteThread extends Thread{
 		    	boolean beforeRemoveExecution = false;
 		    	boolean executeTestCase = true;
 		    	boolean afterRemoveExecution = true;
-		    	
+		    	boolean checkexecution = false;
 
 		    	switch(PanelClass.get().jComboBoxLastExecution.getSelectedIndex()){
-				case 0://EXECUTE AND REMOVE LAST EXECUTION
+				case EXECUTE_AND_REMOVE_LAST_EXECUTION:
 			    	beforeRemoveExecution = false;
 				    executeTestCase = true;
 				    afterRemoveExecution = true;
 					break;
-				case 1://ONLY EXECUTE
+				case ONLY_EXECUTE:
 			    	beforeRemoveExecution = false;
 				    executeTestCase = true;
 				    afterRemoveExecution = false;
 					break;
-				case 2://REMOVE LAST EXECUTION AND EXECUTE
+				case REMOVE_LAST_EXECUTION_AND_EXECUTE:
 			    	beforeRemoveExecution = true;
 				    executeTestCase = true;
 				    afterRemoveExecution = false;
 					break;
-				case 3://REMOVE LAST EXECUTION
+				case REMOVE_LAST_EXECUTION:
 			    	beforeRemoveExecution = true;
 				    executeTestCase = false;
 				    afterRemoveExecution = false;
+					break;
+				case CHECK_EXECUTION:
+					checkexecution = true;
 					break;
 				default:
 			    	beforeRemoveExecution = false;
@@ -124,8 +153,13 @@ public class ExecuteThread extends Thread{
 				    afterRemoveExecution = false;
 					break;	
 		    	}
-		    	
-				if(!status.equals(ExecutionStatus.NOT_RUN)){
+		    	if(checkexecution){
+		    		
+		    		Integer idExecutionVersion = TestLinkClass.getTestLink()
+		    				.getIdExecutionVersion(testPlanId, testCaseId);
+		    		executeResults[i] = db.getExecutedResultCustomFields(idExecutionVersion, browser);
+	
+		    	}else if(!status.equals(ExecutionStatus.NOT_RUN)){
 					if(beforeRemoveExecution){
 						TestLinkClass.getTestLink().removeExecuteTestCase(testCaseId, testPlanId);
 					}
@@ -139,6 +173,7 @@ public class ExecuteThread extends Thread{
 			}
 		}
 		PanelClass.get().jProgressBarExelToTestLink.setValue(nRows);
+		PanelClass.get().jComboBoxLastExecution.setEnabled(true);
 		ExecuteExcel.endExecute(executeResults);
 	}
 

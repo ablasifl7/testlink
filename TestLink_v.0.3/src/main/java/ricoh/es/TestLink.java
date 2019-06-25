@@ -9,13 +9,18 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+import org.apache.xmlrpc.XmlRpcException;
+
 import br.eti.kinoshita.testlinkjavaapi.TestLinkAPI;
 import br.eti.kinoshita.testlinkjavaapi.constants.ActionOnDuplicate;
 import br.eti.kinoshita.testlinkjavaapi.constants.ExecutionStatus;
 import br.eti.kinoshita.testlinkjavaapi.constants.ExecutionType;
+import br.eti.kinoshita.testlinkjavaapi.constants.ResponseDetails;
 import br.eti.kinoshita.testlinkjavaapi.constants.TestCaseDetails;
 import br.eti.kinoshita.testlinkjavaapi.constants.TestCaseStatus;
 import br.eti.kinoshita.testlinkjavaapi.constants.TestImportance;
+import br.eti.kinoshita.testlinkjavaapi.constants.TestLinkMethods;
+import br.eti.kinoshita.testlinkjavaapi.constants.TestLinkParams;
 import br.eti.kinoshita.testlinkjavaapi.model.Build;
 import br.eti.kinoshita.testlinkjavaapi.model.CustomField;
 import br.eti.kinoshita.testlinkjavaapi.model.Execution;
@@ -28,6 +33,7 @@ import br.eti.kinoshita.testlinkjavaapi.model.TestProject;
 import br.eti.kinoshita.testlinkjavaapi.model.TestSuite;
 import br.eti.kinoshita.testlinkjavaapi.model.User;
 import br.eti.kinoshita.testlinkjavaapi.util.TestLinkAPIException;
+import br.eti.kinoshita.testlinkjavaapi.util.Util;
 
 public class TestLink {
 	/*
@@ -466,6 +472,68 @@ public class TestLink {
 		Integer platformId = 0;
 		Boolean overwrite = true;
 		testLinkAPI.reportTCResult(testCaseId, testCaseExternalId, testPlanId, status, null, buildName, notes, guess, bugId, platformId, platformName, customFields, overwrite);
+	}
+	public String getExecutionResults(Integer testPlanId,Integer testCaseId,Integer testProjectId,String customFieldName){
+		ResponseDetails details = ResponseDetails.FULL;
+		
+		TestCase tc = testLinkAPI.getTestCase(testCaseId, null, 1);
+		Integer testCaseExternalId = tc.getId();
+		Integer  versionNumber = tc.getVersion();
+	
+		
+		System.out.println("testCaseId: "+testCaseId);
+		//CustomField cf = testLinkAPI.getTestCaseCustomFieldDesignValue(testCaseId, testCaseExternalId, versionNumber,
+			//	testProjectId, customFieldName, details);
+		
+
+        Map<String, Object> executionData = new HashMap<String, Object>();
+        executionData.put(TestLinkParams.TEST_CASE_ID.toString(), testCaseId);
+        executionData.put(TestLinkParams.TEST_CASE_EXTERNAL_ID.toString(), testCaseExternalId);
+        executionData.put(TestLinkParams.VERSION.toString(), versionNumber);
+        executionData.put(TestLinkParams.TEST_PROJECT_ID.toString(), testProjectId);
+        executionData.put(TestLinkParams.CUSTOM_FIELD_NAME.toString(), customFieldName);
+        executionData.put(TestLinkParams.DETAILS.toString(), Util.getStringValueOrNull(details));
+		
+        
+        
+        try {
+			Object response = testLinkAPI.executeXmlRpcCall(TestLinkMethods.GET_TEST_CASE_CUSTOM_FIELD_DESIGN_VALUE.toString(),
+					executionData);
+			System.out.println(response.toString());
+		} catch (TestLinkAPIException | XmlRpcException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+
+		
+		
+		return null;
+	}
+	
+	public String getExecutionResults(Integer testPlanId,Integer testCaseId,Integer testCaseExternalId,DataBase db,String browser){
+		Execution exection = testLinkAPI.getLastExecutionResult(testPlanId, testCaseId, testCaseExternalId);
+
+	
+		if(exection == null){
+			return TestLinkClass.getTestLink().ExecutionStatusNOT_RUN.name();
+		}else{
+			System.out.println("testPlanId:         "+testPlanId);
+			Integer idExecutionVersion = exection.getTestCaseVersionId();
+			Integer id = exection.getId();
+			System.out.println("idExecutionVersion: "+idExecutionVersion);
+			System.out.println("id:                 "+id);
+			return exection.getStatus().name();
+		}
+	
+	}
+	public Integer getIdExecutionVersion(Integer testPlanId,Integer testCaseId){
+		Execution exection = testLinkAPI.getLastExecutionResult(testPlanId, testCaseId, null);
+		if(exection == null){
+			return null;
+		}else{
+			return exection.getTestCaseVersionId();
+		}
 	}
 	
 	public String executeTestCaseMessage(Integer testCaseId,Integer testPlanId,

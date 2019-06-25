@@ -260,7 +260,7 @@ public class Panel extends javax.swing.JFrame {
             }
         });
 
-        jComboBoxLastExecution.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "EXECUTE AND REMOVE LAST EXECUTION", "ONLY EXECUTE", "REMOVE LAST EXECUTION AND EXECUTE", "REMOVE LAST EXECUTION" }));
+        jComboBoxLastExecution.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "EXECUTE AND REMOVE LAST EXECUTION", "ONLY EXECUTE", "REMOVE LAST EXECUTION AND EXECUTE", "REMOVE LAST EXECUTION","CHECK EXECUTION" }));
 
         jButtonCheckExcel.setText("CHECK EXCEL");
         jButtonCheckExcel.addActionListener(new java.awt.event.ActionListener() {

@@ -16,6 +16,7 @@ public class Processing {
 		ricoh.es.methods.Frame.generarComboBox(PanelClass.get().jComboBoxTestPlan,
 				testPlan,defTestPlan);
 
+		PanelClass.get().jComboBoxLastExecution.setSelectedIndex(4);
 	}
 
 

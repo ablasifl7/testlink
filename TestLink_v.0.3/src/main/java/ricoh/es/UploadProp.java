@@ -12,20 +12,36 @@ public class UploadProp {
 	final protected static String PATH = (new java.io.File("")).getAbsolutePath().concat("\\prop");
 	final protected static String FILE = "config.properties";
 
+	final private static String KEY = "R1C0H_1T_5ER31CE5";
+
+	private static String devKey;
+	
     private static ricoh.es.methods.Propietats prop = null;
     protected static void setProp(){
 
     	String titol = null;
     	prop = new ricoh.es.methods.Propietats(PATH, FILE, null, null,titol);
 
-     	Processing.initialize(prop.propString("TL_URL"),
-    			prop.propString("DEVKEY"),
+    	if(prop.propBoolean("CRYPT")){
+    		devKey = ricoh.es.methods.Crypt
+    				.decrypt(prop.propString("DEVKEY"), KEY);
+    	}else{
+    		devKey = prop.propString("DEVKEY");
+    	}
+     	Processing.initialize(prop.propString("TL_URL"),devKey,
     			prop.propString("DEF_PROJPREF")+":"+prop.propString("DEF_PROJNAME"),
     			prop.propString("DEF_TESTPLAN"));
     }
     protected static void initialize(){
-     	Processing.initialize(prop.propString("TL_URL"),
-    			prop.propString("DEVKEY"),
+    	if(prop.propBoolean("CRYPT")){
+    		devKey = ricoh.es.methods.Crypt
+    				.decrypt(prop.propString("DEVKEY"), KEY);
+    	}else{
+    		devKey = prop.propString("DEVKEY");
+    	}
+    	
+     	Processing.initialize(prop.propString("TL_URL"),devKey,
+ 
     			prop.propString("DEF_PROJPREF"),
     			prop.propString("DEF_PROJNAME"),
     			prop.propString("DEF_TESTPLAN"));

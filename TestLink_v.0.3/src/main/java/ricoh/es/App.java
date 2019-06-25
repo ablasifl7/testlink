@@ -33,9 +33,40 @@ public class App
     	//Test4.test7();
     	//test2();
     	//TestExcel.test1();
-    	testExcel();
+    	//testExcel();
+    	
+    	//crypt();
+    	 hashMapTest();
+    	
        System.out.println("END");
       
+    }
+    private static void hashMapTest(){
+    	java.util.Map<String,String> m = new java.util.HashMap<String,String>();
+    	m.put("A", "Hola,");
+    	m.put("B", "Com");
+    	m.put("C", "Estàs?");
+
+    	System.out.println("A: "+m.get("A"));
+    	System.out.println("B: "+m.get("B"));
+    	System.out.println("C: "+m.get("C"));
+    	m.put("B", "Molt be gracies");
+    	System.out.println("A: "+m.get("A"));
+    	System.out.println("B: "+m.get("B"));
+    	System.out.println("C: "+m.get("C"));
+    	
+    }
+    
+    
+    private static void crypt(){
+    	String plainText = "4e0d7eada29acec933831a07d8dfa74d";
+    	String key = "R1C0H_1T_5ER31CE5";
+    	String text = null;
+    	text = ricoh.es.methods.Crypt.encrypt(plainText, key);
+    	System.out.println(text);
+    	text = ricoh.es.methods.Crypt.decrypt(text, key);
+    	System.out.println(text);
+    	
     }
     
     private static void testExcel(){
